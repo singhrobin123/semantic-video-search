@@ -73,7 +73,10 @@ async def fetch_youtube_transcript(
         transcript = ytt_api.fetch(video_id, languages=lang)
     except Exception as exc:
         logger.error("youtube_transcript_fetch_failed", video_id=video_id, error=str(exc))
-        raise
+        raise ValueError(
+            f"Could not fetch transcript for video {video_id}: {type(exc).__name__}. "
+            "The video may be private, have no captions, or YouTube may be blocking requests."
+        ) from exc
 
     segments = [
         TranscriptSegment(
